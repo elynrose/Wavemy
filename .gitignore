@@ -1,0 +1,65 @@
+# Dependencies
+node_modules/
+
+# Build output - Keep dist/ for deployment
+# dist/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Configuration files with sensitive data
+config.php
+src/firebase-config.js
+
+# Keep example config files
+!config.example.php
+!src/firebase-config.example.js
+
+# Composer
+vendor/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Uploads directory (user files)
+uploads/
+
+# Database dumps
+*.sql
+*.db
+
+# PHP temp files
+*.php~
+
+# Firebase cache
+.firebase/
+
+# Backup files
+*.bak
+*.backup
