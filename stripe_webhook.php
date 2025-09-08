@@ -71,6 +71,7 @@ try {
 
 // Function to create Printful order
 function createPrintfulOrder($orderData) {
+    // According to Printful API docs, the correct format is:
     $printfulData = [
         'recipient' => [
             'name' => $orderData['customer_name'],
@@ -83,34 +84,40 @@ function createPrintfulOrder($orderData) {
             'zip' => $orderData['shipping_address']['postal_code'],
         ],
         'items' => [[
-            'variant_id' => $orderData['printful_product_id'],
+            'sync_variant_id' => intval($orderData['printful_product_id']), // Use sync_variant_id for your template products
             'quantity' => 1,
             'files' => [[
                 'url' => $orderData['image_url'],
                 'type' => 'default'
             ]]
-        ]]
+        ]],
+        'external_id' => substr('mw_' . $orderData['stripe_session_id'], 0, 32) // Printful external ID limit is 32 chars
     ];
     
-    // Send to Printful API with store ID
+    // Use the correct API endpoint format from documentation
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, PRINTFUL_API_URL . 'stores/' . PRINTFUL_STORE_ID . '/orders');
+    curl_setopt($ch, CURLOPT_URL, PRINTFUL_API_URL . 'orders');
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($printfulData));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Authorization: Bearer ' . PRINTFUL_API_KEY,
-        'Content-Type: application/json'
+        'Content-Type: application/json',
+        'X-PF-Store-Id: ' . PRINTFUL_STORE_ID // Add store ID as header instead
     ]);
     
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
     
+    $responseData = json_decode($response, true);
+    
     if ($httpCode >= 200 && $httpCode < 300) {
-        return json_decode($response, true);
+        return $responseData;
     } else {
-        throw new Exception('Printful API error: ' . $response);
+        // Log the detailed error for debugging
+        error_log("Printful API Error (HTTP $httpCode): " . $response);
+        throw new Exception('Printful API error (' . $httpCode . '): ' . ($responseData['error']['message'] ?? $response));
     }
 }
 
