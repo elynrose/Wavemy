@@ -140,7 +140,7 @@ function getMemoryDetails($memoryId) {
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ]);
         
-        $stmt = $pdo->prepare("SELECT title, image_url FROM memories WHERE id = ?");
+        $stmt = $pdo->prepare("SELECT title, image_url FROM wave_assets WHERE id = ?");
         $stmt->execute([$memoryId]);
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
         

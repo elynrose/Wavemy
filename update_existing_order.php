@@ -24,7 +24,7 @@ try {
         echo "Product name: " . ($product['name'] ?? 'Unknown') . "\n";
         
         // Get memory details
-        $memoryStmt = $pdo->prepare("SELECT title, image_url FROM memories WHERE id = ?");
+        $memoryStmt = $pdo->prepare("SELECT title, image_url FROM wave_assets WHERE id = ?");
         $memoryStmt->execute([$order['memory_id']]);
         $memory = $memoryStmt->fetch(PDO::FETCH_ASSOC);
         echo "Memory title: " . ($memory['title'] ?? 'Unknown') . "\n";
