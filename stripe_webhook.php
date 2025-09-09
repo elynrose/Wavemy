@@ -44,6 +44,10 @@ try {
             'amount_paid' => $session['amount_total']
         ]);
         
+        // Get product and memory details for complete order data
+        $product = getProduct($productId);
+        $memory = getMemoryDetails($memoryId);
+        
         // Save order to database
         saveOrderToDatabase([
             'stripe_session_id' => $session['id'],
@@ -54,7 +58,15 @@ try {
             'customer_email' => $customerEmail,
             'customer_name' => $customerName,
             'amount_paid' => $session['amount_total'],
-            'status' => 'paid'
+            'status' => 'paid',
+            'memory_title' => $memory['title'] ?? 'Untitled Memory',
+            'memory_image_url' => $memory['image_url'] ?? '',
+            'product_name' => $product['name'] ?? 'Custom Print',
+            'product_variant_id' => $product['printful_id'] ?? '',
+            'quantity' => 1,
+            'unit_price' => $session['amount_total'] / 100, // Convert from cents to dollars
+            'total_price' => $session['amount_total'] / 100, // Convert from cents to dollars
+            'shipping_address' => json_encode($shippingAddress)
         ]);
         
         http_response_code(200);
@@ -121,6 +133,22 @@ function createPrintfulOrder($orderData) {
     }
 }
 
+// Function to get memory details
+function getMemoryDetails($memoryId) {
+    try {
+        $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4", DB_USER, DB_PASS, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        ]);
+        
+        $stmt = $pdo->prepare("SELECT title, image_url FROM memories WHERE id = ?");
+        $stmt->execute([$memoryId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+        
+    } catch (PDOException $e) {
+        return [];
+    }
+}
+
 // Function to save order to database
 function saveOrderToDatabase($orderData) {
     try {
@@ -128,7 +156,7 @@ function saveOrderToDatabase($orderData) {
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ]);
         
-        // Create orders table if it doesn't exist
+        // Create orders table if it doesn't exist (with all columns)
         $pdo->exec("
             CREATE TABLE IF NOT EXISTS `orders` (
                 `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -140,21 +168,35 @@ function saveOrderToDatabase($orderData) {
                 `customer_email` VARCHAR(255) NOT NULL,
                 `customer_name` VARCHAR(255) NOT NULL,
                 `amount_paid` INT NOT NULL,
-                `status` VARCHAR(50) NOT NULL,
+                `status` ENUM('pending','paid','processing','shipped','delivered','cancelled') DEFAULT 'pending',
+                `memory_title` VARCHAR(255) NOT NULL,
+                `memory_image_url` VARCHAR(1024) NOT NULL,
+                `product_name` VARCHAR(255) NOT NULL,
+                `product_variant_id` VARCHAR(255) NOT NULL,
+                `quantity` INT DEFAULT 1,
+                `unit_price` DECIMAL(10,2) NOT NULL,
+                `total_price` DECIMAL(10,2) NOT NULL,
+                `shipping_address` TEXT NULL,
+                `tracking_number` VARCHAR(255) NULL,
                 `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 INDEX `idx_user_id` (`user_id`),
                 INDEX `idx_memory_id` (`memory_id`),
                 INDEX `idx_stripe_session` (`stripe_session_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         ");
         
-        // Insert order record
+        // Insert order record with all fields
         $stmt = $pdo->prepare("
             INSERT INTO `orders` 
             (`stripe_session_id`, `user_id`, `memory_id`, `product_id`, `printful_order_id`, 
-             `customer_email`, `customer_name`, `amount_paid`, `status`) 
+             `customer_email`, `customer_name`, `amount_paid`, `status`, `memory_title`, 
+             `memory_image_url`, `product_name`, `product_variant_id`, `quantity`, 
+             `unit_price`, `total_price`, `shipping_address`) 
             VALUES (:stripe_session_id, :user_id, :memory_id, :product_id, :printful_order_id,
-                    :customer_email, :customer_name, :amount_paid, :status)
+                    :customer_email, :customer_name, :amount_paid, :status, :memory_title,
+                    :memory_image_url, :product_name, :product_variant_id, :quantity,
+                    :unit_price, :total_price, :shipping_address)
         ");
         
         $stmt->execute([
@@ -166,7 +208,15 @@ function saveOrderToDatabase($orderData) {
             ':customer_email' => $orderData['customer_email'],
             ':customer_name' => $orderData['customer_name'],
             ':amount_paid' => $orderData['amount_paid'],
-            ':status' => $orderData['status']
+            ':status' => $orderData['status'],
+            ':memory_title' => $orderData['memory_title'],
+            ':memory_image_url' => $orderData['memory_image_url'],
+            ':product_name' => $orderData['product_name'],
+            ':product_variant_id' => $orderData['product_variant_id'],
+            ':quantity' => $orderData['quantity'],
+            ':unit_price' => $orderData['unit_price'],
+            ':total_price' => $orderData['total_price'],
+            ':shipping_address' => $orderData['shipping_address']
         ]);
         
         return $pdo->lastInsertId();
