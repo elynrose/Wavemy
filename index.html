@@ -45,6 +45,24 @@
     .image-modal img{width:100%;height:auto;border-radius:8px;box-shadow:0 20px 40px rgba(0,0,0,0.3)}
     .image-modal-close{position:absolute;top:-40px;right:0;background:rgba(255,255,255,0.9);border:none;color:#0b0d12;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px;font-weight:bold}
     .image-modal-close:hover{background:white}
+    
+    /* Voice Recorder Modal Styles */
+    .recorder-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px}
+    .recorder-modal-content{background:#ffffff;border-radius:20px;padding:40px;max-width:500px;width:90%;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,0.2)}
+    .recorder-modal h2{color:#0b0d12;margin:0 0 16px 0;font-size:24px;font-weight:600}
+    .recorder-controls{display:flex;justify-content:center;gap:16px;margin:24px 0}
+    .record-btn{width:80px;height:80px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:24px;transition:all 0.3s ease}
+    .record-btn.record{background:#dc2626;color:white}
+    .record-btn.record:hover{background:#b91c1c;transform:scale(1.1)}
+    .record-btn.stop{background:#059669;color:white}
+    .record-btn.stop:hover{background:#047857}
+    .record-btn.play{background:#2563eb;color:white}
+    .record-btn.play:hover{background:#1d4ed8}
+    .record-btn:disabled{background:#9ca3af;cursor:not-allowed;transform:none}
+    .recording-indicator{color:#dc2626;font-weight:600;margin:16px 0;animation:pulse 1s infinite}
+    .audio-preview{width:100%;margin:16px 0}
+    .timer{font-size:18px;font-weight:600;color:#374151;margin:16px 0;font-family:monospace}
+    @keyframes pulse{0%{opacity:1}50%{opacity:0.5}100%{opacity:1}}
     .results-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;margin-bottom:16px}
     .products-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:800px;margin:0 auto}
     @media (max-width: 640px) {
@@ -60,7 +78,7 @@
 <!-- Auth Modal (shown when not authenticated) -->
 <div id="authModal" class="auth-modal hidden">
   <div class="auth-modal-content">
-    <h2>Welcome to MemoryWaves</h2>
+    <h1 style="margin: 0;">MemoryWaves</h1>
     <p>Transform precious voice recordings of your loved ones into beautiful waveform art. Create lasting visual memories that you can frame, share, and treasure forever.</p>
     
     <!-- Email Login Form -->
@@ -99,6 +117,45 @@
   </div>
 </div>
 
+<!-- Voice Recorder Modal -->
+<div id="recorderModal" class="recorder-modal hidden" style="display: none;">
+  <div class="recorder-modal-content">
+    <h2>🎤 Record Your Voice</h2>
+    <p style="color: #6b7280; margin: 0 0 24px 0;">Record a precious voice memory to transform into a beautiful waveform</p>
+    
+    <div id="recordingStatus" style="margin: 16px 0; min-height: 24px;">
+      <span style="color: #6b7280;">Click record to begin</span>
+    </div>
+    
+    <div class="timer" id="recordingTimer">00:00</div>
+    
+    <div class="recorder-controls">
+      <button id="startRecordBtn" class="record-btn record" title="Start Recording">
+        ⏺️
+      </button>
+      <button id="stopRecordBtn" class="record-btn stop" disabled title="Stop Recording">
+        ⏹️
+      </button>
+      <button id="playRecordBtn" class="record-btn play" disabled title="Play Recording">
+        ▶️
+      </button>
+    </div>
+    
+    <audio id="recordedAudio" class="audio-preview" controls style="display: none;"></audio>
+    
+    <div style="margin-top: 24px; display: flex; justify-content: center; gap: 12px;">
+      <button id="useRecordingBtn" disabled 
+              style="background: #059669; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 500;">
+        Use This Recording
+      </button>
+      <button id="cancelRecordingBtn" 
+              style="background: #6b7280; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 500;">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
 <div id="mainContent" class="wrap">
   <div class="row" style="justify-content: space-between; align-items: center; margin-bottom: 20px;">
     <h1 style="margin: 0;">MemoryWaves</h1>
@@ -121,6 +178,13 @@
         </svg>
         <span class="file-upload-text" id="fileUploadText">Choose voice recording</span>
       </label>
+      <span style="color: #6b7280; font-size: 14px; margin: 0 8px;">or</span>
+      <button id="btnRecord" type="button" style="background: #dc2626; border: none; color: white; padding: 10px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 500;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z" />
+        </svg>
+        Record Voice
+      </button>
       <input id="titleInput" type="text" placeholder="Memory title (e.g., 'Mom's Laughter', 'Dad's Bedtime Story')" required style="flex: 1; padding: 8px; border: 1px solid #e6e9f2; border-radius: 6px; margin: 0 8px;">
       <button id="btnCreate" disabled style="display: flex; align-items: center; gap: 6px;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -209,6 +273,17 @@ const els = {
   passwordInput: document.getElementById('passwordInput'),
   btnEmailLogin: document.getElementById('btnEmailLogin'),
   btnEmailRegister: document.getElementById('btnEmailRegister'),
+  // Voice recorder elements
+  btnRecord: document.getElementById('btnRecord'),
+  recorderModal: document.getElementById('recorderModal'),
+  startRecordBtn: document.getElementById('startRecordBtn'),
+  stopRecordBtn: document.getElementById('stopRecordBtn'),
+  playRecordBtn: document.getElementById('playRecordBtn'),
+  recordingStatus: document.getElementById('recordingStatus'),
+  recordingTimer: document.getElementById('recordingTimer'),
+  recordedAudio: document.getElementById('recordedAudio'),
+  useRecordingBtn: document.getElementById('useRecordingBtn'),
+  cancelRecordingBtn: document.getElementById('cancelRecordingBtn'),
   // Waveforms list elements
   waveformsList: document.getElementById('waveformsList'),
   waveformsContainer: document.getElementById('waveformsContainer'),
@@ -220,6 +295,13 @@ let lastFile = null;
 
 // Make peaks available globally for the auth module
 window.peaks = null;
+
+// Voice recording variables
+let mediaRecorder;
+let recordedChunks = [];
+let recordingStartTime;
+let recordingTimer;
+let recordedBlob;
 
 // Function to load user's waveforms with pagination support
 async function loadUserWaveforms(offset = 0, append = false) {
@@ -899,7 +981,200 @@ function showMemoryModal(imageUrl, title, qrUrl) {
   document.addEventListener('keydown', handleImageModalKeydown);
 }
 
-// Make functions available globally
+// Voice Recording Functions
+function openRecorderModal() {
+  els.recorderModal.classList.remove('hidden');
+  els.recorderModal.style.display = 'flex';
+  resetRecorder();
+  
+  // Add escape key listener
+  document.addEventListener('keydown', handleRecorderModalKeydown);
+  
+  // Add click outside to close
+  els.recorderModal.addEventListener('click', handleRecorderModalClick);
+}
+
+function closeRecorderModal() {
+  els.recorderModal.classList.add('hidden');
+  els.recorderModal.style.display = 'none';
+  stopRecording();
+  resetRecorder();
+  
+  // Remove event listeners
+  document.removeEventListener('keydown', handleRecorderModalKeydown);
+  els.recorderModal.removeEventListener('click', handleRecorderModalClick);
+}
+
+function resetRecorder() {
+  recordedChunks = [];
+  recordedBlob = null;
+  els.recordingTimer.textContent = '00:00';
+  els.recordingStatus.innerHTML = '<span style="color: #6b7280;">Click record to begin</span>';
+  els.startRecordBtn.disabled = false;
+  els.stopRecordBtn.disabled = true;
+  els.playRecordBtn.disabled = true;
+  els.useRecordingBtn.disabled = true;
+  els.recordedAudio.style.display = 'none';
+  
+  if (recordingTimer) {
+    clearInterval(recordingTimer);
+    recordingTimer = null;
+  }
+}
+
+async function startRecording() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ 
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        sampleRate: 44100
+      } 
+    });
+    
+    mediaRecorder = new MediaRecorder(stream, {
+      mimeType: 'audio/webm;codecs=opus'
+    });
+    
+    recordedChunks = [];
+    
+    mediaRecorder.ondataavailable = (event) => {
+      if (event.data.size > 0) {
+        recordedChunks.push(event.data);
+      }
+    };
+    
+    mediaRecorder.onstop = () => {
+      recordedBlob = new Blob(recordedChunks, { type: 'audio/webm' });
+      const audioURL = URL.createObjectURL(recordedBlob);
+      els.recordedAudio.src = audioURL;
+      els.recordedAudio.style.display = 'block';
+      els.playRecordBtn.disabled = false;
+      els.useRecordingBtn.disabled = false;
+      
+      // Stop all tracks
+      stream.getTracks().forEach(track => track.stop());
+    };
+    
+    mediaRecorder.start(1000); // Collect data every second
+    recordingStartTime = Date.now();
+    
+    // Update UI
+    els.startRecordBtn.disabled = true;
+    els.stopRecordBtn.disabled = false;
+    els.recordingStatus.innerHTML = '<span class="recording-indicator">🔴 Recording...</span>';
+    
+    // Start timer
+    recordingTimer = setInterval(updateRecordingTimer, 100);
+    
+  } catch (error) {
+    console.error('Recording failed:', error);
+    alert('Recording failed: ' + error.message + '\n\nPlease make sure you have granted microphone permission.');
+  }
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    mediaRecorder.stop();
+    els.startRecordBtn.disabled = false;
+    els.stopRecordBtn.disabled = true;
+    els.recordingStatus.innerHTML = '<span style="color: #059669;">✅ Recording complete</span>';
+    
+    if (recordingTimer) {
+      clearInterval(recordingTimer);
+      recordingTimer = null;
+    }
+  }
+}
+
+function updateRecordingTimer() {
+  if (recordingStartTime) {
+    const elapsed = Date.now() - recordingStartTime;
+    const seconds = Math.floor(elapsed / 1000) % 60;
+    const minutes = Math.floor(elapsed / 60000);
+    els.recordingTimer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+}
+
+function playRecording() {
+  if (els.recordedAudio.paused) {
+    els.recordedAudio.play();
+    els.playRecordBtn.innerHTML = '⏸️';
+  } else {
+    els.recordedAudio.pause();
+    els.playRecordBtn.innerHTML = '▶️';
+  }
+}
+
+function useRecording() {
+  if (recordedBlob) {
+    // Convert blob to File object
+    const file = new File([recordedBlob], `recording_${Date.now()}.webm`, { 
+      type: 'audio/webm',
+      lastModified: Date.now() 
+    });
+    
+    // Simulate file input selection
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    els.file.files = dataTransfer.files;
+    
+    // Update UI
+    els.fileUploadArea.classList.add('has-file');
+    els.fileUploadText.textContent = `🎤 ${file.name}`;
+    
+    // Process the recorded audio
+    lastFile = file;
+    processAudioFile(file);
+    
+    // Close recorder modal
+    closeRecorderModal();
+  }
+}
+
+async function processAudioFile(file) {
+  try {
+    els.meta.textContent = 'Processing recorded audio...';
+    const buf = await decode(file);
+    peaks = computePeaksFromBuffer(buf, 2000);
+    window.peaks = peaks;
+    els.meta.textContent = `Recorded: ${formatDuration(buf.duration)}`;
+    drawPreview();
+    updateCreateButtonState();
+  } catch (error) {
+    console.error('Audio processing failed:', error);
+    els.meta.textContent = 'Error processing recorded audio';
+  }
+}
+
+function formatDuration(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+function handleRecorderModalKeydown(event) {
+  if (event.key === 'Escape') {
+    closeRecorderModal();
+  }
+}
+
+function handleRecorderModalClick(event) {
+  // Close modal if clicking on the backdrop (not the content)
+  if (event.target === els.recorderModal) {
+    closeRecorderModal();
+  }
+}
+
+// Make recording functions available globally
+window.openRecorderModal = openRecorderModal;
+window.closeRecorderModal = closeRecorderModal;
+window.startRecording = startRecording;
+window.stopRecording = stopRecording;
+window.playRecording = playRecording;
+window.useRecording = useRecording;
+
+// Make other functions available globally
 window.loadOrderProducts = loadOrderProducts;
 window.orderProduct = orderProduct;
 window.showOrderOptions = showOrderOptions;
@@ -1030,6 +1305,27 @@ els.titleInput.addEventListener('input', () => {
   if (peaks) {
     drawPreview();
   }
+});
+
+// Voice recorder event listeners
+els.btnRecord.addEventListener('click', openRecorderModal);
+els.startRecordBtn.addEventListener('click', startRecording);
+els.stopRecordBtn.addEventListener('click', stopRecording);
+els.playRecordBtn.addEventListener('click', playRecording);
+els.cancelRecordingBtn.addEventListener('click', closeRecorderModal);
+els.useRecordingBtn.addEventListener('click', useRecording);
+
+// Audio element event listeners
+els.recordedAudio.addEventListener('ended', () => {
+  els.playRecordBtn.innerHTML = '▶️';
+});
+
+els.recordedAudio.addEventListener('play', () => {
+  els.playRecordBtn.innerHTML = '⏸️';
+});
+
+els.recordedAudio.addEventListener('pause', () => {
+  els.playRecordBtn.innerHTML = '▶️';
 });
 
 // File upload area uses label, so no manual click handler needed
