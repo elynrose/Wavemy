@@ -262,15 +262,144 @@ window.loadMoreWaveforms = async function(offset) {
   }
 };
 
-// Placeholder functions for order functionality (these will be implemented in HTML)
-window.showOrderOptions = function(memoryId, imageUrl, title, buttonElement) {
-  console.log('showOrderOptions called:', { memoryId, imageUrl, title });
-  // This function is implemented in the main HTML script
-  if (window.showToast) {
-    window.showToast('Order functionality will be implemented', 'info');
-  } else {
-    alert('Order functionality will be implemented');
+// Order functionality (implemented from HTML)
+window.orderProduct = async function(productId, memoryId, imageUrl) {
+  try {
+    const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
+    if (!currentUser) {
+      alert('Please sign in to place an order');
+      return;
+    }
+    
+    console.log('Creating order for:', { productId, memoryId, imageUrl });
+    
+    // Create Stripe checkout session
+    const response = await fetch('create_checkout.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        product_id: productId,
+        memory_id: memoryId,
+        image_url: imageUrl,
+        user_id: currentUser.uid,
+        user_email: currentUser.email,
+        user_name: currentUser.displayName || currentUser.email
+      })
+    });
+    
+    console.log('Checkout response status:', response.status);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Checkout response error:', errorText);
+      throw new Error(`HTTP ${response.status}: ${errorText}`);
+    }
+    
+    const result = await response.json();
+    console.log('Checkout result:', result);
+    
+    if (result.success && result.checkout_url) {
+      // Redirect to Stripe checkout
+      window.location.href = result.checkout_url;
+    } else {
+      alert('Error creating order: ' + (result.error || 'Unknown error'));
+    }
+    
+  } catch (error) {
+    console.error('Order error:', error);
+    alert('Error placing order: ' + error.message);
   }
+};
+
+window.showOrderOptions = async function(memoryId, imageUrl, title, buttonElement) {
+  try {
+    // Change button state to show loading
+    const originalText = buttonElement.textContent;
+    buttonElement.textContent = 'Loading...';
+    buttonElement.disabled = true;
+    
+    // Create a modal-like overlay for product selection
+    const orderModal = document.createElement('div');
+    orderModal.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    `;
+    
+    // Get products
+    const response = await fetch('get_products.php');
+    const products = await response.json();
+    
+    const modalContent = `
+      <div style="background: white; border-radius: 20px; padding: 32px; max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto;">
+        <div style="text-align: center; margin-bottom: 24px;">
+          <h2 style="margin: 0 0 8px 0; color: #0b0d12;">Order Print for "${title}"</h2>
+          <p style="margin: 0; color: #6b7280;">Choose your preferred print size and material</p>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px;">
+          ${products.map(product => `
+            <div class="product-card" style="border: 2px solid #e6e9f2; border-radius: 12px; padding: 16px; background: #fafbfc; text-align: center; transition: all 0.2s ease; cursor: pointer;" 
+                 onclick="selectProduct('${product.id}', ${memoryId}, '${imageUrl}', this)">
+              <div style="font-size: 32px; margin-bottom: 12px;">🖼️</div>
+              <div style="font-weight: 600; color: #0b0d12; margin-bottom: 4px; font-size: 14px;">${product.name}</div>
+              <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">${product.size}</div>
+              <div style="font-size: 12px; color: #6b7280; margin-bottom: 12px;">${product.material}</div>
+              <div style="font-size: 18px; font-weight: 600; color: #2a4df5;">${product.price_formatted}</div>
+              <div style="font-size: 11px; color: #6b7280; margin-top: 8px;">${product.description}</div>
+            </div>
+          `).join('')}
+        </div>
+        
+        <div style="text-align: center;">
+          <button onclick="closeOrderModal()" style="background: #6b7280; border: none; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 500;">
+            Cancel
+          </button>
+        </div>
+      </div>
+    `;
+    
+    orderModal.innerHTML = modalContent;
+    document.body.appendChild(orderModal);
+    
+    // Store reference for cleanup
+    window.currentOrderModal = orderModal;
+    
+    // Reset button state
+    buttonElement.textContent = originalText;
+    buttonElement.disabled = false;
+    
+  } catch (error) {
+    console.error('Error showing order options:', error);
+    alert('Error loading order options: ' + error.message);
+    
+    // Reset button state
+    buttonElement.textContent = originalText;
+    buttonElement.disabled = false;
+  }
+};
+
+window.selectProduct = async function(productId, memoryId, imageUrl, cardElement) {
+  // Visual feedback
+  cardElement.style.borderColor = '#2a4df5';
+  cardElement.style.background = '#f0f4ff';
+  
+  // Close modal and proceed to checkout
+  window.closeOrderModal();
+  
+  // Start order process
+  await window.orderProduct(productId, memoryId, imageUrl);
 };
 
 window.closeOrderModal = function() {
