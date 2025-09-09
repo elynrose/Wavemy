@@ -3,10 +3,13 @@
 header('Content-Type: text/html; charset=UTF-8');
 
 // Database configuration
-$dbHost = '127.0.0.1';
-$dbName = 'wavemy';
-$dbUser = 'root';
-$dbPass = 'password';
+// Load configuration
+require_once 'config.php';
+
+$dbHost = DB_HOST;
+$dbName = DB_NAME;
+$dbUser = DB_USER;
+$dbPass = DB_PASS;
 $table = 'wave_assets';
 
 // Get the memory identifier from URL parameter

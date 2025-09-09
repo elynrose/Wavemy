@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MemoryWaves</title>
+  <title>MemoWindow</title>
   <style>
     body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,sans-serif;background:#f5f7fb;color:#0b0d12;margin:0}
     .wrap{max-width:900px;margin:auto;padding:24px}
@@ -78,7 +78,7 @@
 <!-- Auth Modal (shown when not authenticated) -->
 <div id="authModal" class="auth-modal hidden">
   <div class="auth-modal-content">
-    <h1 style="margin: 0;">MemoryWaves</h1>
+    <h1 style="margin: 0;"><img src="images/logo.png" alt="MemoWindow" style="width: 280px; height: 50px;"></h1>
     <p>Transform precious voice recordings of your loved ones into beautiful waveform art. Create lasting visual memories that you can frame, share, and treasure forever.</p>
     
     <!-- Email Login Form -->
@@ -158,7 +158,7 @@
 
 <div id="mainContent" class="wrap">
   <div class="row" style="justify-content: space-between; align-items: center; margin-bottom: 20px;">
-    <h1 style="margin: 0;">MemoryWaves</h1>
+    <h1 style="margin: 0;"><img src="images/logo.png" alt="MemoWindow" style="width: 280px; height: 50px;"></h1>
     <!-- User info (shown when authenticated) -->
     <div id="userInfo" class="user-info hidden">
       <img id="userAvatar" class="user-avatar" src="" alt="User avatar">
@@ -224,7 +224,7 @@
       <div id="orderSection" class="hidden" style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #e6e9f2;">
         <h4 style="margin: 0 0 16px 0; color: #0b0d12; text-align: center;">Order Physical Prints</h4>
         <p style="margin: 0 0 20px 0; text-align: center; color: #6b7280; font-size: 14px;">
-          Transform your MemoryWave into a beautiful physical frame with QR code
+          Transform your MemoWindow into a beautiful physical frame with QR code
         </p>
         <div class="products-grid">
           <!-- Products will be loaded here -->
@@ -235,9 +235,9 @@
 
   <!-- User's Waveforms List -->
   <div id="waveformsList" class="card hidden">
-    <h3 style="margin: 0 0 16px 0; color: #0b0d12;">Your MemoryWaves</h3>
+    <h3 style="margin: 0 0 16px 0; color: #0b0d12;">Your MemoWindows</h3>
     <div id="waveformsContainer">
-      <div class="muted" style="text-align: center; padding: 20px;">Loading your MemoryWaves...</div>
+      <div class="muted" style="text-align: center; padding: 20px;">Loading your MemoWindows...</div>
     </div>
   </div>
 </div>
@@ -359,7 +359,7 @@ function displayWaveforms(waveforms) {
   
   if (!waveforms || waveforms.length === 0) {
     console.log('🔍 No waveforms to display');
-    els.waveformsContainer.innerHTML = '<div class="muted" style="text-align: center; padding: 20px;">No MemoryWaves yet. Create your first one above!</div>';
+    els.waveformsContainer.innerHTML = '<div class="muted" style="text-align: center; padding: 20px;">No MemoWindows yet. Create your first one above!</div>';
     return;
   }
   
@@ -479,7 +479,7 @@ async function deleteMemory(memoryId, title, buttonElement) {
         // Check if list is now empty
         const remainingItems = document.querySelectorAll('.waveform-item');
         if (remainingItems.length === 0) {
-          els.waveformsContainer.innerHTML = '<div class="muted" style="text-align: center; padding: 20px;">No MemoryWaves yet. Create your first one above!</div>';
+          els.waveformsContainer.innerHTML = '<div class="muted" style="text-align: center; padding: 20px;">No MemoWindows yet. Create your first one above!</div>';
         }
       }, 300);
       

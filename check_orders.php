@@ -2,10 +2,13 @@
 // check_orders.php - Check if orders are being saved to database
 header('Content-Type: text/plain');
 
-$dbHost = '127.0.0.1';
-$dbName = 'wavemy';
-$dbUser = 'root';
-$dbPass = 'password';
+// Load configuration
+require_once 'config.php';
+
+$dbHost = DB_HOST;
+$dbName = DB_NAME;
+$dbUser = DB_USER;
+$dbPass = DB_PASS;
 
 try {
     $pdo = new PDO("mysql:host=$dbHost;dbname=$dbName;charset=utf8mb4", $dbUser, $dbPass, [

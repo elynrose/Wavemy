@@ -6,10 +6,13 @@ header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
 // Database configuration
-$dbHost = '127.0.0.1';
-$dbName = 'wavemy';
-$dbUser = 'root';
-$dbPass = 'password';
+// Load configuration
+require_once 'config.php';
+
+$dbHost = DB_HOST;
+$dbName = DB_NAME;
+$dbUser = DB_USER;
+$dbPass = DB_PASS;
 $table = 'wave_assets';
 
 // Validate required parameters
