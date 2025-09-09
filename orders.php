@@ -24,18 +24,20 @@ try {
             o.id,
             o.stripe_session_id,
             o.memory_id,
-            o.product_id,
             o.printful_order_id,
-            o.customer_name,
-            o.customer_email,
-            o.amount_paid,
+            o.memory_title,
+            o.memory_image_url,
+            o.product_name,
+            o.product_variant_id,
+            o.quantity,
+            o.unit_price,
+            o.total_price,
             o.status,
+            o.shipping_address,
+            o.tracking_number,
             o.created_at,
-            m.title as memory_title,
-            m.original_name,
-            m.image_url
+            o.updated_at
         FROM orders o
-        LEFT JOIN wave_assets m ON o.memory_id = m.id
         WHERE o.user_id = :user_id
         ORDER BY o.created_at DESC
     ");
@@ -251,13 +253,13 @@ try {
                     </div>
                     
                     <div class="order-price">
-                        <?php echo formatPrice($order['amount_paid']); ?>
+                        <?php echo formatPrice($order['total_price']); ?>
                     </div>
                 </div>
                 
                 <div class="order-meta">
                     <span>Ordered: <?php echo date('M j, Y \a\t g:i A', strtotime($order['created_at'])); ?></span>
-                    <span>Customer: <?php echo htmlspecialchars($order['customer_name']); ?></span>
+                    <span>Product: <?php echo htmlspecialchars($order['product_name']); ?></span>
                 </div>
             </div>
             <?php endforeach; ?>
