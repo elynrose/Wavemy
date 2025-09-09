@@ -29,10 +29,10 @@ try {
             // Use database products
             $products = array_map(function($product) {
                 return [
-                    'id' => $product['id'],
+                    'id' => $product['product_key'], // Use product_key as the ID
                     'name' => $product['name'],
                     'description' => $product['description'],
-                    'price' => intval($product['price']),
+                    'price' => intval($product['price'] * 100), // Convert to cents
                     'price_formatted' => formatPrice($product['price']),
                     'size' => $product['size'],
                     'material' => $product['material'],
@@ -50,7 +50,7 @@ try {
                 'id' => 'memory_frame_8x10',
                 'name' => '8x10 Memory Frame',
                 'description' => 'Beautiful 8x10 inch frame for your memory',
-                'price' => 2499,
+                'price' => 2499, // Price in cents
                 'price_formatted' => '$24.99',
                 'size' => '8x10 inches',
                 'material' => 'Premium Wood',
@@ -60,7 +60,7 @@ try {
                 'id' => 'memory_frame_11x14',
                 'name' => '11x14 Memory Frame',
                 'description' => 'Larger 11x14 inch frame for your memory',
-                'price' => 3499,
+                'price' => 3499, // Price in cents
                 'price_formatted' => '$34.99',
                 'size' => '11x14 inches',
                 'material' => 'Premium Wood',
@@ -70,7 +70,7 @@ try {
                 'id' => 'memory_frame_16x20',
                 'name' => '16x20 Memory Frame',
                 'description' => 'Premium 16x20 inch frame for your memory',
-                'price' => 4999,
+                'price' => 4999, // Price in cents
                 'price_formatted' => '$49.99',
                 'size' => '16x20 inches',
                 'material' => 'Premium Wood',
