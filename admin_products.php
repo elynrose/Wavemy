@@ -136,7 +136,7 @@ try {
         SELECT 
             p.*,
             COUNT(o.id) as order_count,
-            SUM(o.amount_paid) as total_revenue
+            SUM(o.amount_paid) / 100 as total_revenue
         FROM print_products p
         LEFT JOIN orders o ON p.product_key = o.product_id
         GROUP BY p.id
