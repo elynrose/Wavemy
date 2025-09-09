@@ -219,10 +219,28 @@ async function showUserInfo(user) {
 
 // Initialize authentication
 export function initAuth() {
+  console.log('🔥 Initializing Firebase Auth...');
   const els = getElements();
+  
+  // Check if required elements exist
+  if (!els.btnLogin) {
+    console.error('❌ Login button not found! DOM might not be ready.');
+    // Retry after a short delay
+    setTimeout(() => {
+      console.log('🔄 Retrying auth initialization...');
+      initAuth();
+    }, 1000);
+    return;
+  }
+  
+  console.log('✅ Auth elements found, setting up listeners...');
+  
+  // Mark button as initialized
+  els.btnLogin.dataset.initialized = 'true';
   
   // Set up auth state listener
   onAuthStateChanged(auth, (user) => {
+    console.log('🔥 Auth state changed:', user ? 'Logged in' : 'Logged out');
     if (user) {
       showUserInfo(user);
     } else {
@@ -232,6 +250,7 @@ export function initAuth() {
 
   // Login button
   els.btnLogin.addEventListener('click', async () => {
+    console.log('🔥 Google login button clicked...');
     try {
       els.btnLogin.disabled = true;
       els.btnLogin.textContent = 'Signing in...';
@@ -385,3 +404,6 @@ async function checkAdminStatus(userUID) {
 export function getCurrentUser() {
   return currentUser;
 }
+
+// Export loadUserWaveforms function
+export { loadUserWaveforms };
