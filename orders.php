@@ -36,7 +36,11 @@ try {
             o.shipping_address,
             o.tracking_number,
             o.created_at,
-            o.updated_at
+            o.updated_at,
+            o.product_id,
+            o.customer_name,
+            o.customer_email,
+            o.amount_paid
         FROM orders o
         WHERE o.user_id = :user_id
         ORDER BY o.created_at DESC
@@ -240,20 +244,20 @@ try {
                 </div>
                 
                 <div class="order-details">
-                    <img src="<?php echo htmlspecialchars($order['image_url']); ?>" 
+                    <img src="<?php echo htmlspecialchars($order['memory_image_url']); ?>" 
                          alt="MemoryWave" class="order-image">
                     
                     <div class="order-info">
-                        <h4><?php echo htmlspecialchars($product['name'] ?? 'Custom Print'); ?></h4>
-                        <p><?php echo htmlspecialchars($product['size'] ?? ''); ?> • <?php echo htmlspecialchars($product['material'] ?? ''); ?></p>
-                        <p>Original: <?php echo htmlspecialchars($order['original_name']); ?></p>
+                        <h4><?php echo htmlspecialchars($order['product_name']); ?></h4>
+                        <p>Quantity: <?php echo htmlspecialchars($order['quantity']); ?></p>
+                        <p>Unit Price: $<?php echo number_format($order['unit_price'], 2); ?></p>
                         <?php if ($order['printful_order_id']): ?>
                             <p>Printful Order: <?php echo htmlspecialchars($order['printful_order_id']); ?></p>
                         <?php endif; ?>
                     </div>
                     
                     <div class="order-price">
-                        <?php echo formatPrice($order['total_price']); ?>
+                        $<?php echo number_format($order['total_price'], 2); ?>
                     </div>
                 </div>
                 
