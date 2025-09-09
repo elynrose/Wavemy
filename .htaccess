@@ -1,0 +1,103 @@
+# Security Headers for MemoWindow Application
+
+# Enable HTTPS redirect (uncomment when SSL is configured)
+# RewriteEngine On
+# RewriteCond %{HTTPS} !=on
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Content Security Policy
+Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://apis.google.com https://js.stripe.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: blob:; media-src 'self' blob:; connect-src 'self' https://firebaseapp.com https://*.firebaseio.com https://api.stripe.com https://api.printful.com https://www.google-analytics.com; worker-src 'self'; frame-ancestors 'none';"
+
+# X-Frame-Options
+Header always set X-Frame-Options "DENY"
+
+# X-Content-Type-Options
+Header always set X-Content-Type-Options "nosniff"
+
+# X-XSS-Protection
+Header always set X-XSS-Protection "1; mode=block"
+
+# Referrer Policy
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+# Permissions Policy (Feature Policy)
+Header always set Permissions-Policy "camera=(), microphone=(self), geolocation=(), payment=(self), usb=()"
+
+# Strict Transport Security (uncomment when HTTPS is enabled)
+# Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+
+# Cache Control for static assets
+<filesMatch "\.(css|js|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+</filesMatch>
+
+# Cache Control for HTML files
+<filesMatch "\.(html|htm)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+</filesMatch>
+
+# Cache Control for JSON files
+<filesMatch "\.(json)$">
+    Header set Cache-Control "public, max-age=86400"
+</filesMatch>
+
+# Prevent access to sensitive files
+<filesMatch "\.(env|log|sql|backup|bak|old|tmp|temp)$">
+    Order allow,deny
+    Deny from all
+</filesMatch>
+
+# Prevent access to configuration files
+<filesMatch "(^#.*#|\.(bak|config|dist|fla|inc|ini|log|psd|sh|sql|sw[op])|~)$">
+    Order allow,deny
+    Deny from all
+</filesMatch>
+
+# Prevent access to hidden files and directories
+RedirectMatch 403 /\..*$
+
+# Enable compression for better performance
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/json
+</IfModule>
+
+# Enable Gzip compression as fallback
+<IfModule mod_gzip.c>
+    mod_gzip_on Yes
+    mod_gzip_dechunk Yes
+    mod_gzip_item_include file \.(html?|txt|css|js|php|pl)$
+    mod_gzip_item_include mime ^application/x-javascript.*
+    mod_gzip_item_include mime ^text/.*
+    mod_gzip_item_exclude rspheader ^Content-Encoding:.*gzip.*
+    mod_gzip_item_exclude mime ^image/.*
+    mod_gzip_item_include handler ^cgi-script$
+</IfModule>
+
+# Error pages
+ErrorDocument 404 /404.html
+ErrorDocument 403 /403.html
+ErrorDocument 500 /500.html
+
+# Disable server signature
+ServerSignature Off
+
+# PHP security settings (if using PHP)
+<IfModule mod_php.c>
+    php_flag display_errors Off
+    php_flag log_errors On
+    php_flag expose_php Off
+    php_value session.cookie_httponly 1
+    php_value session.cookie_secure 1
+    php_value session.cookie_samesite Strict
+</IfModule>

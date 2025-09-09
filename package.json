@@ -6,9 +6,14 @@
   "scripts": {
     "build": "webpack --mode production",
     "build:dev": "webpack --mode development",
+    "build:analyze": "webpack --mode production --analyze",
     "watch": "webpack --watch",
     "dev": "webpack --mode development --watch",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "serve": "npx http-server . -p 3000 -c-1",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "echo \"Linting not configured\" && exit 0",
+    "clean": "rm -rf dist/*",
+    "deploy:build": "npm run clean && npm run build"
   },
   "keywords": [],
   "author": "",
@@ -23,6 +28,9 @@
     "@babel/core": "^7.28.4",
     "@babel/preset-env": "^7.28.3",
     "babel-loader": "^10.0.0",
+    "css-loader": "^7.1.2",
+    "mini-css-extract-plugin": "^2.9.4",
+    "style-loader": "^4.0.0",
     "webpack": "^5.101.3",
     "webpack-cli": "^6.0.1"
   }
