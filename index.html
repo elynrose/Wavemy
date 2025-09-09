@@ -1360,7 +1360,7 @@ els.btnCreate.addEventListener('click', async (event)=>{
     
     // First create QR code URL
     const tempMemoryId = Date.now(); // Temporary ID for QR generation
-    const tempPlayPageUrl = `${window.location.origin}/Wavemy/play.php?temp_id=${tempMemoryId}`;
+    const tempPlayPageUrl = `${window.location.origin}/play.php?temp_id=${tempMemoryId}`;
     const tempQrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=800x800&margin=1&data=${encodeURIComponent(tempPlayPageUrl)}`; // Higher resolution QR
     
     console.log('🔍 Creating composition with QR:', tempQrApiUrl);
@@ -1388,7 +1388,7 @@ els.btnCreate.addEventListener('click', async (event)=>{
     const timestamp = Date.now();
     const baseName = lastFile.name.replace(/\.[^.]+$/, '');
     const uniqueId = timestamp + '_' + Math.random().toString(36).substr(2, 9);
-    const finalPlayPageUrl = `${window.location.origin}/Wavemy/play.php?uid=${uniqueId}`;
+    const finalPlayPageUrl = `${window.location.origin}/play.php?uid=${uniqueId}`;
     
     // Generate QR code for the final composition
     els.status.textContent='Generating final composition…';
@@ -1468,7 +1468,7 @@ els.btnCreate.addEventListener('click', async (event)=>{
     els.waveformPreview.src = mainImageUrl;
     
     // QR link should point to the play page  
-    const actualPlayPageUrl = `${window.location.origin}/Wavemy/play.php?id=${json.id}`;
+    const actualPlayPageUrl = `${window.location.origin}/play.php?id=${json.id}`;
     els.qrLink.href = actualPlayPageUrl;
     
     // QR code is now embedded in the complete composition, no separate display needed

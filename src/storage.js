@@ -72,7 +72,7 @@ export async function uploadWaveformFiles(waveformBlob, originalFileName, userId
     
     // Create a temporary record to get the ID for the play page URL
     // We'll update this after we get the database ID
-    playPageUrl = `${window.location.origin}/Wavemy/play.php?id=TEMP_ID`;
+    playPageUrl = `${window.location.origin}/play.php?id=TEMP_ID`;
     
     // Generate QR code pointing to the play page instead of the image
     const qrBlob = await generateQRCode(playPageUrl);
