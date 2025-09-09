@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ':printful_id' => $_POST['printful_id'],
                     ':name' => $_POST['name'],
                     ':description' => $_POST['description'],
-                    ':price' => intval($_POST['price']),
+                    ':price' => floatval($_POST['price']),
                     ':size' => $_POST['size'],
                     ':material' => $_POST['material'],
                     ':sort_order' => intval($_POST['sort_order'] ?? 0)
@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ':id' => intval($_POST['product_id']),
                     ':name' => $_POST['name'],
                     ':description' => $_POST['description'],
-                    ':price' => intval($_POST['price']),
+                    ':price' => floatval($_POST['price']),
                     ':size' => $_POST['size'],
                     ':material' => $_POST['material'],
                     ':sort_order' => intval($_POST['sort_order'] ?? 0),
@@ -423,8 +423,8 @@ try {
                         <input type="text" name="name" class="form-input" placeholder="e.g., XL Memory Frame" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Price (cents)</label>
-                        <input type="number" name="price" class="form-input" placeholder="e.g., 5500 for $55.00" required>
+                        <label class="form-label">Price (dollars)</label>
+                        <input type="number" step="0.01" name="price" class="form-input" placeholder="e.g., 55.00 for $55.00" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Size</label>
@@ -465,7 +465,7 @@ try {
                                 Printful ID: <?php echo $product['printful_id']; ?>
                             </div>
                         </div>
-                        <div class="product-price">$<?php echo number_format($product['price'] / 100, 2); ?></div>
+                        <div class="product-price">$<?php echo number_format($product['price'], 2); ?></div>
                     </div>
 
                     <div style="margin: 12px 0;">
@@ -486,7 +486,7 @@ try {
                             <div class="stat-label">Orders</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-number">$<?php echo number_format(($product['total_revenue'] ?? 0) / 100, 0); ?></div>
+                            <div class="stat-number">$<?php echo number_format($product['total_revenue'] ?? 0, 0); ?></div>
                             <div class="stat-label">Revenue</div>
                         </div>
                     </div>
@@ -522,8 +522,8 @@ try {
                         <input type="text" name="name" id="editName" class="form-input" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Price (cents)</label>
-                        <input type="number" name="price" id="editPrice" class="form-input" required>
+                        <label class="form-label">Price (dollars)</label>
+                        <input type="number" step="0.01" name="price" id="editPrice" class="form-input" required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Size</label>
