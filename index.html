@@ -29,16 +29,18 @@
     <div id="emailLoginForm">
       <div style="margin-bottom: 16px;">
         <input type="email" id="emailInput" placeholder="Email address" 
-               style="width: 100%; padding: 12px; border: 1px solid #e6e9f2; border-radius: 8px; font-size: 14px; margin-bottom: 8px;">
+               style="width: 100%; padding: 12px; border: 1px solid #e6e9f2; border-radius: 8px; font-size: 16px; margin-bottom: 8px; min-height: 44px;"
+               autocomplete="email" inputmode="email">
         <input type="password" id="passwordInput" placeholder="Password" 
-               style="width: 100%; padding: 12px; border: 1px solid #e6e9f2; border-radius: 8px; font-size: 14px;">
+               style="width: 100%; padding: 12px; border: 1px solid #e6e9f2; border-radius: 8px; font-size: 16px; min-height: 44px;"
+               autocomplete="current-password">
       </div>
       
       <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-        <button id="btnEmailLogin" style="flex: 1; background: #2a4df5; border: none; color: white; padding: 12px; border-radius: 8px; font-weight: 500;">
+        <button id="btnEmailLogin" style="flex: 1; background: #2a4df5; border: none; color: white; padding: 12px; border-radius: 8px; font-weight: 500; min-height: 44px; font-size: 16px;">
           Sign In
         </button>
-        <button id="btnEmailRegister" style="flex: 1; background: #6b7280; border: none; color: white; padding: 12px; border-radius: 8px; font-weight: 500;">
+        <button id="btnEmailRegister" style="flex: 1; background: #6b7280; border: none; color: white; padding: 12px; border-radius: 8px; font-weight: 500; min-height: 44px; font-size: 16px;">
           Register
         </button>
       </div>
@@ -49,7 +51,7 @@
     </div>
     
     <!-- Google Login Button -->
-    <button id="btnLogin" class="btn-auth">
+    <button id="btnLogin" class="btn-auth" style="min-height: 44px; font-size: 16px;">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
         <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -114,7 +116,7 @@
 
   <div class="card">
     <div class="row">
-      <label for="file" class="file-upload-area" id="fileUploadArea" style="cursor: pointer;">
+      <label for="file" class="file-upload-area mobile-friendly touch-target" id="fileUploadArea" style="cursor: pointer;">
         <input id="file" type="file" accept="audio/*" style="display: none;">
         <svg class="file-upload-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
           <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
@@ -123,14 +125,16 @@
         <span class="file-upload-text" id="fileUploadText">Choose voice recording</span>
       </label>
       <span style="color: #6b7280; font-size: 14px; margin: 0 8px;">or</span>
-      <button id="btnRecord" type="button" style="background: #dc2626; border: none; color: white; padding: 10px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 500;">
+      <button id="btnRecord" type="button" class="mobile-friendly touch-target" style="background: #dc2626; border: none; color: white; padding: 10px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 500; min-height: 44px; font-size: 16px;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
           <path d="M12,2A3,3 0 0,1 15,5V11A3,3 0 0,1 12,14A3,3 0 0,1 9,11V5A3,3 0 0,1 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7A5,5 0 0,0 12,16A5,5 0 0,0 17,11H19Z" />
         </svg>
         Record Voice
       </button>
-      <input id="titleInput" type="text" placeholder="Memory title (e.g., 'Mom's Laughter', 'Dad's Bedtime Story')" required style="flex: 1; padding: 8px; border: 1px solid #e6e9f2; border-radius: 6px; margin: 0 8px;">
-      <button id="btnCreate" disabled style="display: flex; align-items: center; gap: 6px;">
+      <input id="titleInput" type="text" placeholder="Memory title (e.g., 'Mom's Laughter', 'Dad's Bedtime Story')" required 
+             style="flex: 1; padding: 12px; border: 1px solid #e6e9f2; border-radius: 6px; margin: 0 8px; font-size: 16px; min-height: 44px;"
+             autocomplete="off">
+      <button id="btnCreate" disabled style="display: flex; align-items: center; gap: 6px; min-height: 44px; font-size: 16px;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
           <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
           <path d="M12,11L16,15H13.5V19H10.5V15H8L12,11Z" />
