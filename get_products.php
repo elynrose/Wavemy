@@ -21,7 +21,7 @@ try {
                 material
             FROM print_products 
             WHERE is_active = 1 
-            ORDER BY sort_order ASC, name ASC
+            ORDER BY name ASC
         ");
         $dbProducts = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
@@ -44,20 +44,39 @@ try {
         }
         
     } catch (Exception $e) {
-        // Fallback to config file products
-        $products = [];
-        foreach ($GLOBALS['PRINT_PRODUCTS'] as $id => $product) {
-            $products[] = [
-                'id' => $id,
-                'name' => $product['name'],
-                'description' => $product['description'],
-                'price' => $product['price'],
-                'price_formatted' => formatPrice($product['price']),
-                'size' => $product['size'],
-                'material' => $product['material'],
-                'printful_id' => $product['printful_id']
-            ];
-        }
+        // Fallback to hardcoded products if database fails
+        $products = [
+            [
+                'id' => 'memory_frame_8x10',
+                'name' => '8x10 Memory Frame',
+                'description' => 'Beautiful 8x10 inch frame for your memory',
+                'price' => 2499,
+                'price_formatted' => '$24.99',
+                'size' => '8x10 inches',
+                'material' => 'Premium Wood',
+                'printful_id' => '12345'
+            ],
+            [
+                'id' => 'memory_frame_11x14',
+                'name' => '11x14 Memory Frame',
+                'description' => 'Larger 11x14 inch frame for your memory',
+                'price' => 3499,
+                'price_formatted' => '$34.99',
+                'size' => '11x14 inches',
+                'material' => 'Premium Wood',
+                'printful_id' => '12346'
+            ],
+            [
+                'id' => 'memory_frame_16x20',
+                'name' => '16x20 Memory Frame',
+                'description' => 'Premium 16x20 inch frame for your memory',
+                'price' => 4999,
+                'price_formatted' => '$49.99',
+                'size' => '16x20 inches',
+                'material' => 'Premium Wood',
+                'printful_id' => '12347'
+            ]
+        ];
     }
     
     echo json_encode($products);
